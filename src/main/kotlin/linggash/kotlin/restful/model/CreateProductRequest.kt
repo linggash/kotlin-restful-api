@@ -1,12 +1,22 @@
 package linggash.kotlin.restful.model
 
+import javax.validation.constraints.Min
+import javax.validation.constraints.NotBlank
+import javax.validation.constraints.NotNull
+
 data class CreateProductRequest (
 
-    val id: String,
+    @field:NotBlank
+    val id: String?,
 
-    val name: String,
+    @field:NotBlank
+    val name: String?,
 
-    val price: Long,
+    @field:NotNull
+    @field:Min(value = 1)
+    val price: Long?,
 
-    val quantity: Int
+    @field:NotNull
+    @field:Min(value = 0)
+    val quantity: Int?
 )
