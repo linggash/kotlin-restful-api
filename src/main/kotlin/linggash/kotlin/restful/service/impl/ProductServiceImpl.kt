@@ -4,6 +4,7 @@ import linggash.kotlin.restful.entity.Product
 import linggash.kotlin.restful.error.NotFoundException
 import linggash.kotlin.restful.model.CreateProductRequest
 import linggash.kotlin.restful.model.ProductResponse
+import linggash.kotlin.restful.model.UpdateProductRequest
 import linggash.kotlin.restful.repository.ProductRepository
 import linggash.kotlin.restful.service.ProductService
 import linggash.kotlin.restful.validation.ValidationUtil
@@ -42,6 +43,26 @@ class ProductServiceImpl(
         }else {
             return convertProductToProductResponse(product)
         }
+    }
+
+    override fun update(id: String, updateProductRequest: UpdateProductRequest): ProductResponse {
+        val product = productRepository.findByIdOrNull(id)
+        if (product==null){
+            throw NotFoundException()
+        }
+
+        validationUtil.validate(updateProductRequest)
+
+        product.apply {
+            name = updateProductRequest.name!!
+            price = updateProductRequest.price!!
+            quantity = updateProductRequest.quantity!!
+            updatedAt = Date()
+        }
+
+        productRepository.save(product)
+
+        return convertProductToProductResponse(product)
     }
 
     private fun convertProductToProductResponse(product: Product) : ProductResponse{
