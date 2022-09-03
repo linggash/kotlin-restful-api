@@ -1,6 +1,7 @@
 package linggash.kotlin.restful.controller
 
 import linggash.kotlin.restful.error.NotFoundException
+import linggash.kotlin.restful.error.UnauthorizedException
 import linggash.kotlin.restful.model.WebResponse
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
@@ -26,4 +27,13 @@ class ErrorController {
             data = "Not Found"
         )
     }
+    @ExceptionHandler(value = [UnauthorizedException::class])
+    fun unauthorized(unauthorizedException: UnauthorizedException): WebResponse<String>{
+        return WebResponse(
+            code = 401,
+            status = "UNAUTHORIZED",
+            data = "Please put your X-Api-Key"
+        )
+    }
+
 }
