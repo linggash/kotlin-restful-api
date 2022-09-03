@@ -3,14 +3,17 @@ package linggash.kotlin.restful.service.impl
 import linggash.kotlin.restful.entity.Product
 import linggash.kotlin.restful.error.NotFoundException
 import linggash.kotlin.restful.model.CreateProductRequest
+import linggash.kotlin.restful.model.ListProductRequest
 import linggash.kotlin.restful.model.ProductResponse
 import linggash.kotlin.restful.model.UpdateProductRequest
 import linggash.kotlin.restful.repository.ProductRepository
 import linggash.kotlin.restful.service.ProductService
 import linggash.kotlin.restful.validation.ValidationUtil
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import java.util.Date
+import java.util.stream.Collectors
 
 @Service
 class ProductServiceImpl(
@@ -61,6 +64,12 @@ class ProductServiceImpl(
     override fun delete(id: String) {
         val product = findProductByIdOrThrowNotFound(id)
         productRepository.delete(product)
+    }
+
+    override fun list(listProductRequest: ListProductRequest): List<ProductResponse> {
+        val page = productRepository.findAll(PageRequest.of(listProductRequest.page, listProductRequest.size))
+        val products: List<Product> = page.get().collect(Collectors.toList())
+        return products.map {convertProductToProductResponse(it)}
     }
 
     private fun findProductByIdOrThrowNotFound(id: String): Product {
